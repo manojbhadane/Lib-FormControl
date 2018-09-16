@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="CustomInputLayout">
+        <attr name="cil_hint" format="string" />
+        <attr name="cil_label" format="string" />
+        <attr name="cil_value" format="string" />
+        <attr name="cil_maxLines" format="integer" />
+        <attr name="cil_isMandatory" format="boolean" />
+        <attr name="cil_maxLength" format="integer"/>
+        <attr name="cil_isMultiLine" format="boolean"/>
+        <attr name="cil_component" format="integer">
+            <enum name="inputBox" value="1" />
+            <enum name="dropDown" value="2" />
+        </attr>
+        <attr name="cil_inputType" format="integer">
+            <enum name="text" value="1" />
+            <enum name="phoneNumber" value="2" />
+            <enum name="number" value="3" />
+            <enum name="email" value="4" />
+        </attr>
+
+    </declare-styleable>
+
+</resources>

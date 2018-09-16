@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tool="http://schemas.android.com/tools">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true">
+
+        <!--Label-->
+        <RelativeLayout
+            android:id="@+id/layLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:visibility="gone"
+            tool:visibility="visible">
+
+            <TextView
+                android:id="@+id/txtLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:text="Label"
+                android:textColor="#4a4a4a"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/txtMandatory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@+id/txtLabel"
+                android:text="*"
+                android:textColor="@color/red"
+                android:textSize="18sp" />
+        </RelativeLayout>
+
+        <!--Input box-->
+        <RelativeLayout
+            android:id="@+id/layInputBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layLabel"
+            android:visibility="gone"
+            tool:visibility="visible">
+
+            <RelativeLayout
+                android:id="@+id/layNestedInputbox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/fl_edittext_square_shape"
+                android:padding="2dp">
+
+                <EditText
+                    android:id="@+id/edtInputbox"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_toLeftOf="@+id/layTag"
+                    android:background="#FFFFFF"
+                    android:hint="#4a4a4a"
+                    android:maxLines="1"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="value"
+                    android:textSize="14sp" />
+
+                <LinearLayout
+                    android:id="@+id/layTag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/iconCancel"
+                        android:layout_width="20dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="10dp"
+                        android:padding="2dp"
+                        android:src="@drawable/ic_close_grey"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/txtLengthDesc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/layNestedInputbox"
+                android:layout_margin="2dp"
+                android:singleLine="true"
+                android:text="300/300 Characters Only "
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+        <!-- Drop down -->
+        <RelativeLayout
+            android:id="@+id/laySpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layLabel"
+            android:background="@drawable/fl_edittext_square_shape"
+            android:padding="2dp"
+            android:visibility="gone"
+            tool:visibility="gone">
+
+            <com.manojbhadane.lib_formcontrol.InstantAutoCompleteTextView
+                android:id="@+id/autoCompleteTxt"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_toLeftOf="@+id/iconDropDown"
+                android:background="#FFFFFF"
+                android:hint="Select"
+                android:paddingLeft="10dp"
+                android:singleLine="true"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/iconDropDown"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/ic_arrow_down"
+                android:visibility="visible" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+</layout>

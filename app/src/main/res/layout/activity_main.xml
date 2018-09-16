@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="10dp"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <com.manojbhadane.lib_formcontrol.CustomInputLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cil_component="inputBox"
+        app:cil_hint="Enter name"
+        app:cil_isMandatory="true"
+        app:cil_label="Name" />
+
+    <com.manojbhadane.lib_formcontrol.CustomInputLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:cil_component="inputBox"
+        app:cil_hint="Enter Email"
+        app:cil_inputType="email"
+        app:cil_isMandatory="true"
+        app:cil_label="Email" />
+
+    <com.manojbhadane.lib_formcontrol.CustomInputLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:cil_component="inputBox"
+        app:cil_hint="Enter Phone"
+        app:cil_inputType="phoneNumber"
+        app:cil_label="Phone" />
+
+</LinearLayout>

@@ -1,0 +1,52 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.novoda.bintray-release'
+apply plugin: 'com.android.library'
+
+//Step II: Add the below publish details
+publish {
+
+    def groupProjectID = 'com.manojbhadane.lib_formcontrol'
+    def artifactProjectID = 'FormControl'
+    def publishVersionID = '1.0'
+
+    userOrg = 'manojbhadane'
+    repoName = 'FormControl'
+    groupId = groupProjectID
+    artifactId = artifactProjectID
+    publishVersion = publishVersionID
+    desc = 'Android library for creating easy to use Editext form control with basic validations.'
+    website = 'https://github.com/anitaa1990/Optimize'
+}
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.manojbhadane.library_formcontrol"
+        minSdkVersion 15
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    dataBinding{
+        enabled true
+
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:28.0.0-rc02'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation project(':lib-formcontrol')
+}
