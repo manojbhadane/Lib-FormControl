@@ -1,11 +1,9 @@
 package com.manojbhadane.lib_formcontrol;
 
 import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.databinding.DataBindingUtil;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -20,18 +18,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
-import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TimePicker;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.manojbhadane.lib_formcontrol.adapter.AutoCompleteAdapter;
-import com.manojbhadane.lib_formcontrol.databinding.CustomInputLayoutBinding;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 public class CustomInputLayout extends RelativeLayout implements CustomInputLayoutContract.View {
 
@@ -50,15 +45,18 @@ public class CustomInputLayout extends RelativeLayout implements CustomInputLayo
 
     private Context mContext;
     private OnTouchListener mOnTouchListener;
-    private CustomInputLayoutBinding mDataBinding;
     private AutoCompleteAdapter mAdapterAutocomplete;
     private CustomInputLayoutContract.Presenter mPresenter;
 
-
     private int mComponentType, mInputType, maxLength;
     private boolean isMandatory, isTagPrimary, isMultiline;
-    private String mLabel = "",  mValue;
+    private String mLabel = "", mValue;
 
+    private TextView txtLabel, txtMandatory, txtLengthDesc;
+    private RelativeLayout layInputBox, laySpinner, layLabel;
+    private EditText edtInputbox;
+    private ImageView iconCancel, iconDropDown;
+    private InstantAutoCompleteTextView autoCompleteTxt;
 
     private DatePickerDialog datePickerDialog;
 
@@ -67,9 +65,25 @@ public class CustomInputLayout extends RelativeLayout implements CustomInputLayo
         mContext = context;
 
         final LayoutInflater mInflater = LayoutInflater.from(context);
-        mDataBinding = DataBindingUtil.inflate(mInflater, R.layout.custom_input_layout, this, true);
+//        mDataBinding = DataBindingUtil.inflate(mInflater, R.layout.custom_input_layout, this, true);
+        View v = mInflater.inflate(R.layout.custom_input_layout, this, true);
 
         mPresenter = new CustomInputLayoutPresenterImpl(this);
+
+        txtLabel = (TextView) v.findViewById(R.id.txtLabel);
+        txtMandatory = (TextView) v.findViewById(R.id.txtMandatory);
+        txtLengthDesc = (TextView) v.findViewById(R.id.txtLengthDesc);
+
+        layInputBox = (RelativeLayout) v.findViewById(R.id.layInputBox);
+        laySpinner = (RelativeLayout) v.findViewById(R.id.laySpinner);
+        layLabel = (RelativeLayout) v.findViewById(R.id.layLabel);
+
+        edtInputbox = (EditText) v.findViewById(R.id.edtInputbox);
+
+        iconCancel = (ImageView) v.findViewById(R.id.iconCancel);
+        iconDropDown = (ImageView) v.findViewById(R.id.iconDropDown);
+
+        autoCompleteTxt = (InstantAutoCompleteTextView) v.findViewById(R.id.autoCompleteTxt);
 
         /**
          * Get Attributes
@@ -85,17 +99,16 @@ public class CustomInputLayout extends RelativeLayout implements CustomInputLayo
         isMultiline = a.getBoolean(R.styleable.CustomInputLayout_cil_isMultiLine, false);
         mInputType = a.getInt(R.styleable.CustomInputLayout_cil_inputType, 1);
 
-
         /**
          * Set values
          */
-//        mDataBinding.edtInputbox.setTypeface(BaseApplication.getLatoItalicTypeFace());
+//        edtInputbox.setTypeface(BaseApplication.getLatoItalicTypeFace());
 
-        mDataBinding.txtLabel.setText(mLabel);
+        txtLabel.setText(mLabel);
         sethint(hint);
-        mDataBinding.edtInputbox.setText(value);
-        mDataBinding.edtInputbox.setMaxLines(maxLines);
-        mDataBinding.txtMandatory.setVisibility(isMandatory ? VISIBLE : GONE);
+        edtInputbox.setText(value);
+        edtInputbox.setMaxLines(maxLines);
+        txtMandatory.setVisibility(isMandatory ? VISIBLE : GONE);
 
         setInputType(mInputType);
 //        setTagEnable(isTagEnabled);
@@ -112,12 +125,12 @@ public class CustomInputLayout extends RelativeLayout implements CustomInputLayo
 
         if (mLabel != null)
             if (mLabel.length() > 0)
-                mDataBinding.layLabel.setVisibility(VISIBLE);
+                layLabel.setVisibility(VISIBLE);
 
         /**
          * Listeners
          */
-        mDataBinding.edtInputbox.addTextChangedListener(new TextWatcher() {
+        edtInputbox.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -129,20 +142,19 @@ public class CustomInputLayout extends RelativeLayout implements CustomInputLayo
                 if (mOnTouchListener != null)
                     mOnTouchListener.onTouch();
 
-
-                mDataBinding.iconCancel.setVisibility(s.length() > 0 ? VISIBLE : GONE);
+                iconCancel.setVisibility(s.length() > 0 ? VISIBLE : GONE);
 
                 if (mInputType == INPUTTYPE_EMAIL) {
                     if (mPresenter.isValidEmail(s))
-                        mDataBinding.edtInputbox.setTextColor(mContext.getResources().getColor(R.color.black));
+                        edtInputbox.setTextColor(mContext.getResources().getColor(R.color.black));
                     else
-                        mDataBinding.edtInputbox.setTextColor(mContext.getResources().getColor(R.color.red));
+                        edtInputbox.setTextColor(mContext.getResources().getColor(R.color.red));
                 }
 
                 if (isMultiline) {
                     int rem = maxLength - s.length();
-                    mDataBinding.txtLengthDesc.setText(rem + "/" + maxLength + " Characters Only");
-                    mDataBinding.iconCancel.setVisibility(GONE);
+                    txtLengthDesc.setText(rem + "/" + maxLength + " Characters Only");
+                    iconCancel.setVisibility(GONE);
                 }
             }
 
@@ -152,18 +164,17 @@ public class CustomInputLayout extends RelativeLayout implements CustomInputLayo
             }
         });
 
-        mDataBinding.iconCancel.setOnClickListener(new OnClickListener() {
+        iconCancel.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDataBinding.edtInputbox.setText("");
+                edtInputbox.setText("");
             }
         });
 
-
-        mDataBinding.autoCompleteTxt.setOnClickListener(new OnClickListener() {
+        autoCompleteTxt.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDataBinding.autoCompleteTxt.showDropDown();
+                autoCompleteTxt.showDropDown();
             }
         });
 
@@ -179,17 +190,17 @@ public class CustomInputLayout extends RelativeLayout implements CustomInputLayo
 
 //    public CustomInputLayout setTagEnable(boolean isEnable) {
 //        isTagEnabled = isEnable;
-//        mDataBinding.txtTag.setVisibility(isTagEnabled ? VISIBLE : GONE);
+//        txtTag.setVisibility(isTagEnabled ? VISIBLE : GONE);
 //        return this;
 //    }
 //
 //    public CustomInputLayout setTagPrimary(final boolean isPrimary, final OnTagChangeListener listener) {
 //        this.isTagPrimary = isPrimary;
 //        if (this.isTagPrimary)
-//            mDataBinding.txtTag.setText("Untag primary");
-//        else mDataBinding.txtTag.setText("Tag primary");
+//            txtTag.setText("Untag primary");
+//        else txtTag.setText("Tag primary");
 //
-//        mDataBinding.txtTag.setOnClickListener(new OnClickListener() {
+//        txtTag.setOnClickListener(new OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
 //                setTagPrimary(isTagPrimary ? false : true, listener);
@@ -209,13 +220,13 @@ public class CustomInputLayout extends RelativeLayout implements CustomInputLayo
         mInputType = inputType;
         if (mComponentType == TYPE_INPUTBOX) {
             if (mInputType == INPUTTYPE_TEXT) {
-                mDataBinding.edtInputbox.setInputType(InputType.TYPE_CLASS_TEXT);
+                edtInputbox.setInputType(InputType.TYPE_CLASS_TEXT);
             } else if (mInputType == INPUTTYPE_PHONE) {
-                mDataBinding.edtInputbox.setInputType(InputType.TYPE_CLASS_PHONE);
+                edtInputbox.setInputType(InputType.TYPE_CLASS_PHONE);
             } else if (mInputType == INPUTTYPE_NUMBER) {
-                mDataBinding.edtInputbox.setInputType(InputType.TYPE_CLASS_NUMBER);
+                edtInputbox.setInputType(InputType.TYPE_CLASS_NUMBER);
             } else if (mInputType == INPUTTYPE_EMAIL) {
-                mDataBinding.edtInputbox.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+                edtInputbox.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
             }
         }
         return this;
@@ -226,19 +237,17 @@ public class CustomInputLayout extends RelativeLayout implements CustomInputLayo
         switch (componentType) {
 
             case TYPE_INPUTBOX:
-                mDataBinding.layLabel.setVisibility(VISIBLE);
-                mDataBinding.layInputBox.setVisibility(VISIBLE);
+                layLabel.setVisibility(VISIBLE);
+                layInputBox.setVisibility(VISIBLE);
                 break;
 
             case TYPE_DROPDOWN:
-                mDataBinding.layLabel.setVisibility(VISIBLE);
-                mDataBinding.laySpinner.setVisibility(VISIBLE);
+                layLabel.setVisibility(VISIBLE);
+                laySpinner.setVisibility(VISIBLE);
                 break;
 
-
-
             default:
-                mDataBinding.layInputBox.setVisibility(VISIBLE);
+                layInputBox.setVisibility(VISIBLE);
                 break;
         }
         return this;
@@ -252,11 +261,11 @@ public class CustomInputLayout extends RelativeLayout implements CustomInputLayo
      * @return
      */
     public CustomInputLayout setSpinner(ArrayList<String> items, final SpinnerSelectionListener listener) {
-        mDataBinding.laySpinner.setVisibility(VISIBLE);
+        laySpinner.setVisibility(VISIBLE);
 
-        mDataBinding.layInputBox.setVisibility(GONE);
-        mDataBinding.autoCompleteTxt.setShowAlways(true);
-//        mDataBinding.autoCompleteTxt.setTypeface(BaseApplication.getLatoItalicTypeFace());
+        layInputBox.setVisibility(GONE);
+        autoCompleteTxt.setShowAlways(true);
+//        autoCompleteTxt.setTypeface(BaseApplication.getLatoItalicTypeFace());
         mAdapterAutocomplete = new AutoCompleteAdapter(mContext, R.layout.custom_input_layout, R.id.txtAutocomplete, items, new AutoCompleteAdapter.ItemSelectedListener() {
             @Override
             public void onItemSelected(String item) {
@@ -265,21 +274,21 @@ public class CustomInputLayout extends RelativeLayout implements CustomInputLayo
                 if (mOnTouchListener != null)
                     mOnTouchListener.onTouch();
 
-                mDataBinding.autoCompleteTxt.setText(item);
-                mDataBinding.autoCompleteTxt.setSelection(item.length());
-                mDataBinding.autoCompleteTxt.dismissDropDown();
+                autoCompleteTxt.setText(item);
+                autoCompleteTxt.setSelection(item.length());
+                autoCompleteTxt.dismissDropDown();
             }
         });
-        mDataBinding.autoCompleteTxt.setAdapter(mAdapterAutocomplete);
+        autoCompleteTxt.setAdapter(mAdapterAutocomplete);
         return this;
     }
 
     public CustomInputLayout setSpinner(ArrayList<String> items) {
-        mDataBinding.laySpinner.setVisibility(VISIBLE);
+        laySpinner.setVisibility(VISIBLE);
 
-        mDataBinding.layInputBox.setVisibility(GONE);
-        mDataBinding.autoCompleteTxt.setShowAlways(true);
-//        mDataBinding.autoCompleteTxt.setTypeface(BaseApplication.getLatoItalicTypeFace());
+        layInputBox.setVisibility(GONE);
+        autoCompleteTxt.setShowAlways(true);
+//        autoCompleteTxt.setTypeface(BaseApplication.getLatoItalicTypeFace());
         mAdapterAutocomplete = new AutoCompleteAdapter(mContext, R.layout.custom_input_layout, R.id.txtAutocomplete, items, new AutoCompleteAdapter.ItemSelectedListener() {
             @Override
             public void onItemSelected(String item) {
@@ -287,35 +296,33 @@ public class CustomInputLayout extends RelativeLayout implements CustomInputLayo
                 if (mOnTouchListener != null)
                     mOnTouchListener.onTouch();
 
-                mDataBinding.autoCompleteTxt.setText(item);
-                mDataBinding.autoCompleteTxt.setSelection(item.length());
-                mDataBinding.autoCompleteTxt.dismissDropDown();
+                autoCompleteTxt.setText(item);
+                autoCompleteTxt.setSelection(item.length());
+                autoCompleteTxt.dismissDropDown();
             }
         });
-        mDataBinding.autoCompleteTxt.setAdapter(mAdapterAutocomplete);
+        autoCompleteTxt.setAdapter(mAdapterAutocomplete);
         return this;
     }
-
-
 
     public CustomInputLayout setLabel(String label) {
         if (mLabel != null)
             if (mLabel.length() > 0)
-                mDataBinding.layLabel.setVisibility(VISIBLE);
-        mDataBinding.txtLabel.setText(label);
+                layLabel.setVisibility(VISIBLE);
+        txtLabel.setText(label);
         return this;
     }
 
     public CustomInputLayout setLabelVisibility(boolean shouldShow) {
-        mDataBinding.txtLabel.setVisibility(shouldShow ? VISIBLE : GONE);
+        txtLabel.setVisibility(shouldShow ? VISIBLE : GONE);
         return this;
     }
 
     public CustomInputLayout sethint(String hint) {
         if (mComponentType == TYPE_INPUTBOX)
-            mDataBinding.edtInputbox.setHint(hint);
+            edtInputbox.setHint(hint);
         if (mComponentType == TYPE_DROPDOWN)
-            mDataBinding.autoCompleteTxt.setHint(hint);
+            autoCompleteTxt.setHint(hint);
         return this;
     }
 
@@ -324,12 +331,12 @@ public class CustomInputLayout extends RelativeLayout implements CustomInputLayo
         if (mComponentType == TYPE_INPUTBOX) {
             InputFilter[] filterArray = new InputFilter[1];
             filterArray[0] = new InputFilter.LengthFilter(maxLength);
-            mDataBinding.edtInputbox.setFilters(filterArray);
+            edtInputbox.setFilters(filterArray);
         }
         if (mComponentType == TYPE_DROPDOWN) {
             InputFilter[] filterArray = new InputFilter[1];
             filterArray[0] = new InputFilter.LengthFilter(maxLength);
-            mDataBinding.autoCompleteTxt.setFilters(filterArray);
+            autoCompleteTxt.setFilters(filterArray);
         }
         return this;
     }
@@ -337,8 +344,8 @@ public class CustomInputLayout extends RelativeLayout implements CustomInputLayo
     public CustomInputLayout setMultiline(boolean isMultiline, int maxLength) {
         setMaxLength(maxLength);
         this.isMultiline = isMultiline;
-        mDataBinding.txtLengthDesc.setVisibility(VISIBLE);
-        mDataBinding.iconCancel.setVisibility(GONE);
+        txtLengthDesc.setVisibility(VISIBLE);
+        iconCancel.setVisibility(GONE);
 
         final LayoutParams lparams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 180); // Width , height
         getInputBox().setLayoutParams(lparams);
@@ -350,42 +357,42 @@ public class CustomInputLayout extends RelativeLayout implements CustomInputLayo
 
     public CustomInputLayout setMandatory(boolean isMandatory) {
         this.isMandatory = isMandatory;
-        mDataBinding.txtMandatory.setVisibility(isMandatory ? VISIBLE : GONE);
+        txtMandatory.setVisibility(isMandatory ? VISIBLE : GONE);
         return this;
     }
 
     public CustomInputLayout setMaxLines(int maxLines) {
-        mDataBinding.edtInputbox.setMaxLines(maxLines);
+        edtInputbox.setMaxLines(maxLines);
         return this;
     }
 
     public EditText getInputBox() {
-        return mDataBinding.edtInputbox;
+        return edtInputbox;
     }
 
     public EditText getEditText() {
-        return mDataBinding.edtInputbox;
+        return edtInputbox;
     }
 
     public String getValue() {
         if (mComponentType == TYPE_INPUTBOX) {
-            if (isMandatory && mDataBinding.edtInputbox.getText().toString().length() == 0) {
-                Toast.makeText(mContext, mDataBinding.txtLabel.getText() + " should not be empty", Toast.LENGTH_SHORT).show();
+            if (isMandatory && edtInputbox.getText().toString().length() == 0) {
+                Toast.makeText(mContext, txtLabel.getText() + " should not be empty", Toast.LENGTH_SHORT).show();
                 return "";
             }
 //            if (mInputType == INPUTTYPE_EMAIL) {
-//                if (mPresenter.isValidEmail(mDataBinding.edtInputbox.getText().toString()))
-//                    return mDataBinding.edtInputbox.getText().toString();
+//                if (mPresenter.isValidEmail(edtInputbox.getText().toString()))
+//                    return edtInputbox.getText().toString();
 //                else
 //                    showMessage("Please enter valid email address");
 //            }
-            return mDataBinding.edtInputbox.getText().toString();
+            return edtInputbox.getText().toString();
         } else if (mComponentType == TYPE_DROPDOWN) {
-            if (isMandatory && mDataBinding.autoCompleteTxt.getText().toString().length() == 0) {
-                Toast.makeText(mContext, mDataBinding.autoCompleteTxt.getText() + " should not be empty", Toast.LENGTH_SHORT).show();
+            if (isMandatory && autoCompleteTxt.getText().toString().length() == 0) {
+                Toast.makeText(mContext, autoCompleteTxt.getText() + " should not be empty", Toast.LENGTH_SHORT).show();
                 return "";
             }
-            return mDataBinding.autoCompleteTxt.getText().toString();
+            return autoCompleteTxt.getText().toString();
         }
 
         return "";
@@ -394,32 +401,28 @@ public class CustomInputLayout extends RelativeLayout implements CustomInputLayo
     public CustomInputLayout setValue(String value) {
         if (mComponentType == TYPE_INPUTBOX) {
             mValue = value;
-            mDataBinding.edtInputbox.setText(value);
+            edtInputbox.setText(value);
         } else if (mComponentType == TYPE_DROPDOWN) {
             mValue = value;
-            mDataBinding.autoCompleteTxt.setText(value);
+            autoCompleteTxt.setText(value);
         }
         return this;
     }
 
-
     public AutoCompleteTextView getAutoCompleteTextview() {
-        return mDataBinding.autoCompleteTxt;
+        return autoCompleteTxt;
     }
 
     public void setAutoCompleteShowAlways(boolean show) {
-        mDataBinding.autoCompleteTxt.setShowAlways(show);
+        autoCompleteTxt.setShowAlways(show);
     }
-
-
-
 
     private void showMessage(String msg) {
         Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
     }
 
     private void disableDropDownTextSelection() {
-        mDataBinding.autoCompleteTxt.setCustomSelectionActionModeCallback(new ActionMode.Callback() {
+        autoCompleteTxt.setCustomSelectionActionModeCallback(new ActionMode.Callback() {
 
             public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
                 return false;
@@ -437,13 +440,13 @@ public class CustomInputLayout extends RelativeLayout implements CustomInputLayo
             }
         });
 
-        mDataBinding.autoCompleteTxt.setLongClickable(false);
-        mDataBinding.autoCompleteTxt.setTextIsSelectable(false);
+        autoCompleteTxt.setLongClickable(false);
+        autoCompleteTxt.setTextIsSelectable(false);
     }
 
     public CustomInputLayout showDropDown() {
         if (mComponentType == TYPE_DROPDOWN) {
-            mDataBinding.autoCompleteTxt.showDropDown();
+            autoCompleteTxt.showDropDown();
         }
         return this;
     }
@@ -453,11 +456,11 @@ public class CustomInputLayout extends RelativeLayout implements CustomInputLayo
         if (mAdapterAutocomplete != null)
             mAdapterAutocomplete.disableFilter(true);
 
-        mDataBinding.autoCompleteTxt.setLongClickable(false);
-        mDataBinding.autoCompleteTxt.setTextIsSelectable(false);
-        mDataBinding.autoCompleteTxt.setFocusable(false);
+        autoCompleteTxt.setLongClickable(false);
+        autoCompleteTxt.setTextIsSelectable(false);
+        autoCompleteTxt.setFocusable(false);
 
-        mDataBinding.autoCompleteTxt.setCustomSelectionActionModeCallback(new ActionMode.Callback() {
+        autoCompleteTxt.setCustomSelectionActionModeCallback(new ActionMode.Callback() {
 
             public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
                 return false;
@@ -477,8 +480,6 @@ public class CustomInputLayout extends RelativeLayout implements CustomInputLayo
         return this;
     }
 
-
-
     public void setOnTouchListener(OnTouchListener listener) {
         mOnTouchListener = listener;
     }
@@ -486,7 +487,6 @@ public class CustomInputLayout extends RelativeLayout implements CustomInputLayo
     public interface SpinnerSelectionListener {
         public void onSpinnerItemSelected(String item);
     }
-
 
     public interface OnTouchListener {
         public void onTouch();

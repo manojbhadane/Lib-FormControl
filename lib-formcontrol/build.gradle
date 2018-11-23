@@ -1,5 +1,16 @@
 apply plugin: 'com.android.library'
 
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+
+    }
+}
+
+
 android {
     compileSdkVersion 28
 
@@ -8,8 +19,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "3.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -29,6 +40,25 @@ android {
 
 }
 
+//ext {
+//    bintrayRepo = 'FormControl' // your repo name
+//    bintrayName = 'FormControl' // has to be same as your library module name
+//    publishedGroupId = 'com.manojbhadane.lib_formcontrol' // your module package name
+//    libraryName = 'FormControl'
+//    artifact = 'FormControl' // has to be same as your library module name
+//    libraryDescription = 'FormControl library'
+//    siteUrl = 'https://github.com/manojbhadane/Lib-FormControl'
+//    gitUrl = 'https://github.com/manojbhadane/Lib-FormControl.git'
+//    libraryVersion = '1.0'
+//    developerId = 'manojbhadane'
+//    developerName = 'manoj'
+//    developerEmail = 'manojbhadane777@gmail.com'
+//    licenseName = 'The Apache Software License, Version 2.0'
+//    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+//    allLicenses = ["Apache-2.0"]
+//}
+
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -36,4 +66,95 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+
+
 }
+
+//---------------------------------------------------
+
+
+/*
+group = publishedGroupId
+version = libraryVersion
+
+install {
+    repositories.mavenInstaller {
+        pom.project {
+            packaging 'aar'
+            groupId publishedGroupId
+            artifactId artifact
+
+            name libraryName
+            description libraryDescription
+            url siteUrl
+
+            licenses {
+                license {
+                    name licenseName
+                    url licenseUrl
+                }
+            }
+            developers {
+                developer {
+                    id developerId
+                    name developerName
+                    email developerEmail
+                }
+            }
+            scm {
+                connection gitUrl
+                developerConnection gitUrl
+                url siteUrl
+            }
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+
+//    user = 'manojbhadane'
+//    key = 'ebdd4485211b644322ab84219d28969f3f3c6258'
+
+    configurations = ['archives']
+    pkg {
+        repo = bintrayRepo
+        name = bintrayName
+        desc = libraryDescription
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = allLicenses
+        dryRun = false
+        publish = true
+        override = false
+        publicDownloadNumbers = true
+        version {
+            desc = libraryDescription
+        }
+    }
+}*/

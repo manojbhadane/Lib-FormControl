@@ -8,4 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!-- Dark base activity theme -->
+    <style name="ActivityTheme.Primary.Base.Dark"    parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimaryDark">#33343B</item>
+        <item name="colorPrimary">#8033343B</item>
+        <item name="colorAccent">#FFFFFF</item>
+    </style>
+
 </resources>
